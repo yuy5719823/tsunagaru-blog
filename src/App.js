@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Home } from "./components/Home";
 import { CreatePost } from "./components/CreatePost";
 import { Login } from "./components/Login";
@@ -14,12 +14,12 @@ function App() {
     <Router>
       <NavBar isAuth={isAuth} />
       <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/createpost" element={<CreatePost />}></Route>
-        <Route path="/login" element={<Login setIsAuth={setIsAuth} />}></Route>
-        <Route path="/logout" element={<Logout setIsAuth={setIsAuth} />}></Route>
-      </Routes>
-    </Router>
+          <Route path="/" element={<Home />} />
+          <Route path="/createpost" element={<CreatePost />} />
+          <Route path="/login" element={<Login isAuth={isAuth} setIsAuth={setIsAuth} />} />
+          <Route path="/logout" element={<Logout isAuth={isAuth} setIsAuth={setIsAuth} />} />
+        </Routes>
+      </Router>
   );
 }
 
