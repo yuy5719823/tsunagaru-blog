@@ -3,12 +3,14 @@ import { collection, getDocs, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove
 import { db, auth } from "../firebase";
 import "./Home.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faComment, faReply } from "@fortawesome/free-solid-svg-icons";
 
 export const Home = () => {
   const [postList, setPostList] = useState([]);
   const [commentText, setCommentText] = useState({});
+  const [replyText, setReplyText] = useState({});
   const [showComments, setShowComments] = useState({});
+  const [showReplies, setShowReplies] = useState({});
 
   useEffect(() => {
     const getPosts = async () => {
@@ -16,20 +18,34 @@ export const Home = () => {
       const postsData = await Promise.all(
         posts.docs.map(async (doc) => {
           const postData = { ...doc.data(), id: doc.id };
-          // コメントを取得
+          // コメントを取得（最新順）
           const commentsQuery = query(
             collection(db, `posts/${doc.id}/comments`),
             orderBy("createdAt", "desc")
           );
           const commentsSnapshot = await getDocs(commentsQuery);
-          const comments = commentsSnapshot.docs.map(commentDoc => {
-            const data = commentDoc.data();
-            return {
-              ...data,
-              id: commentDoc.id,
-              createdAt: data.createdAt?.toDate?.() || new Date()
-            };
-          });
+          const comments = await Promise.all(
+            commentsSnapshot.docs.map(async (commentDoc) => {
+              const commentData = commentDoc.data();
+              // 返信を取得（最新順）
+              const repliesQuery = query(
+                collection(db, `posts/${doc.id}/comments/${commentDoc.id}/replies`),
+                orderBy("createdAt", "desc")
+              );
+              const repliesSnapshot = await getDocs(repliesQuery);
+              const replies = repliesSnapshot.docs.map(replyDoc => ({
+                ...replyDoc.data(),
+                id: replyDoc.id,
+                createdAt: replyDoc.data().createdAt?.toDate?.() || new Date()
+              }));
+              return {
+                ...commentData,
+                id: commentDoc.id,
+                createdAt: commentData.createdAt?.toDate?.() || new Date(),
+                replies
+              };
+            })
+          );
           return { ...postData, comments };
         })
       );
@@ -104,7 +120,8 @@ export const Home = () => {
           username: auth.currentUser.displayName,
           id: auth.currentUser.uid,
         },
-        createdAt: now
+        createdAt: now,
+        replies: []
       };
 
       setPostList(postList.map(post => {
@@ -124,10 +141,75 @@ export const Home = () => {
     }
   };
 
+  const handleReply = async (postId, commentId) => {
+    if (!auth.currentUser) {
+      alert("返信するにはログインが必要です");
+      return;
+    }
+
+    const reply = replyText[commentId]?.trim();
+    if (!reply) {
+      alert("返信を入力してください");
+      return;
+    }
+
+    try {
+      const now = new Date();
+      const replyRef = await addDoc(collection(db, `posts/${postId}/comments/${commentId}/replies`), {
+        text: reply,
+        author: {
+          username: auth.currentUser.displayName,
+          id: auth.currentUser.uid,
+        },
+        createdAt: serverTimestamp(),
+      });
+
+      const newReply = {
+        id: replyRef.id,
+        text: reply,
+        author: {
+          username: auth.currentUser.displayName,
+          id: auth.currentUser.uid,
+        },
+        createdAt: now
+      };
+
+      setPostList(postList.map(post => {
+        if (post.id === postId) {
+          return {
+            ...post,
+            comments: post.comments.map(comment => {
+              if (comment.id === commentId) {
+                return {
+                  ...comment,
+                  replies: [newReply, ...(comment.replies || [])]
+                };
+              }
+              return comment;
+            })
+          };
+        }
+        return post;
+      }));
+
+      setReplyText({ ...replyText, [commentId]: "" });
+    } catch (error) {
+      console.error("返信投稿エラー:", error);
+      alert("返信の投稿に失敗しました");
+    }
+  };
+
   const toggleComments = (postId) => {
     setShowComments({
       ...showComments,
       [postId]: !showComments[postId]
+    });
+  };
+
+  const toggleReplies = (commentId) => {
+    setShowReplies({
+      ...showReplies,
+      [commentId]: !showReplies[commentId]
     });
   };
 
@@ -209,6 +291,51 @@ export const Home = () => {
                       </span>
                     </div>
                     <p className="post__commentText">{comment.text}</p>
+                    <div className="post__commentActions">
+                      <button
+                        className="post__replyButton"
+                        onClick={() => toggleReplies(comment.id)}
+                      >
+                        <FontAwesomeIcon icon={faReply} className="post__replyIcon" />
+                        返信 {comment.replies?.length || 0}
+                      </button>
+                    </div>
+                    {showReplies[comment.id] && (
+                      <div className="post__replies">
+                        <div className="post__replyForm">
+                          <textarea
+                            className="post__replyInput"
+                            placeholder="返信を入力... (Ctrl/Command + Enterで送信)"
+                            value={replyText[comment.id] || ""}
+                            onChange={(e) => setReplyText({ ...replyText, [comment.id]: e.target.value })}
+                            onKeyDown={(e) => {
+                              if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                                handleReply(post.id, comment.id);
+                              }
+                            }}
+                          />
+                          <button
+                            className="post__replySubmitButton"
+                            onClick={() => handleReply(post.id, comment.id)}
+                          >
+                            返信
+                          </button>
+                        </div>
+                        <div className="post__replyList">
+                          {comment.replies?.map((reply) => (
+                            <div key={reply.id} className="post__replyItem">
+                              <div className="post__replyHeader">
+                                <span className="post__replyAuthor">@{reply.author.username}</span>
+                                <span className="post__replyDate">
+                                  {formatDate(reply.createdAt)}
+                                </span>
+                              </div>
+                              <p className="post__replyText">{reply.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
