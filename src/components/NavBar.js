@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "./NavBar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faFilePen, faArrowRightToFile } from "@fortawesome/free-solid-svg-icons";
+import { auth } from "../firebase";
 
 export const NavBar = ({ isAuth }) => {
   return (
@@ -18,10 +19,15 @@ export const NavBar = ({ isAuth }) => {
         </Link>
       )}
       {isAuth ? (
-        <Link to="/logout">
-          <FontAwesomeIcon icon={faArrowRightToFile} />
-          ログアウト
-        </Link>
+        <>
+          <span className="username">
+            {auth.currentUser?.displayName || "ユーザー"}
+          </span>
+          <Link to="/logout">
+            <FontAwesomeIcon icon={faArrowRightToFile} />
+            ログアウト
+          </Link>
+        </>
       ) : (
         <Link to="/login">
           <FontAwesomeIcon icon={faArrowRightToFile} />

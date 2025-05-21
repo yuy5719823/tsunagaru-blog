@@ -1,20 +1,35 @@
 nav {
+  background-color: #2c3e50;
+  padding: 1em;
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 50px;
-  gap: 8px;
-  background-color: rgb(250, 204, 117);
+  gap: 1em;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 nav a {
+  color: #ecf0f1;
   text-decoration: none;
-  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 nav a:hover {
-  color: cadetblue;
-  transition: all 0.3s;
+  background-color: #34495e;
+  color: #3498db;
+}
+
+.username {
+  margin-right: auto;
+  font-weight: bold;
+  color: #3498db;
+  padding: 0.5em 1em;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
 nav svg {
