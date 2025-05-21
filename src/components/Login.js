@@ -4,20 +4,24 @@ import { useNavigate } from "react-router-dom";
 
 export const Login = ({ isAuth, setIsAuth }) => {
   const navigate = useNavigate();
-  const loginWithGoogle = () => {
-    // Googleでログイン
+  
+  const loginWithGoogle = async () => {
     if (isAuth) {
       alert("すでにログインしています");
       return;
     }
-    signInWithPopup(auth, provider).then((result) => {
-      localStorage.setItem("isAuth", true);
+    try {
+      await signInWithPopup(auth, provider);
       setIsAuth(true);
       navigate("/");
-    });
+    } catch (error) {
+      console.error("ログインエラー:", error);
+      alert("ログインに失敗しました");
+    }
   };
+
   return (
-    <div>
+    <div className="loginPage">
       <p>ログインして始める</p>
       <button onClick={loginWithGoogle}>Googleでログイン</button>
     </div>
