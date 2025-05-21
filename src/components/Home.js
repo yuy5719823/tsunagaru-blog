@@ -183,9 +183,14 @@ export const Home = () => {
               <div className="post__commentForm">
                 <textarea
                   className="post__commentInput"
-                  placeholder="コメントを入力..."
+                  placeholder="コメントを入力... (Ctrl/Command + Enterで送信)"
                   value={commentText[post.id] || ""}
                   onChange={(e) => setCommentText({ ...commentText, [post.id]: e.target.value })}
+                  onKeyDown={(e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                      handleComment(post.id);
+                    }
+                  }}
                 />
                 <button
                   className="post__commentButton"

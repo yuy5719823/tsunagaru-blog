@@ -66,9 +66,14 @@ export const CreatePost = () => {
           <label className="createPost__label">投稿</label>
           <textarea
             className="createPost__textarea"
-            placeholder="投稿内容を記入"
+            placeholder="投稿内容を記入 (Ctrl/Command + Enterで送信)"
             value={postText}
             onChange={(e) => setPostText(e.target.value)}
+            onKeyDown={(e) => {
+              if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !isSubmitting) {
+                createPost();
+              }
+            }}
           ></textarea>
         </div>
         <button
