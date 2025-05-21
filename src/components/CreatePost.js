@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import "./CreatePost.css";
@@ -10,7 +10,18 @@ export const CreatePost = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!auth.currentUser) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const createPost = async () => {
+    if (!auth.currentUser) {
+      navigate("/login");
+      return;
+    }
+
     await addDoc(collection(db, "posts"), {
       title: title,
       postText: postText,

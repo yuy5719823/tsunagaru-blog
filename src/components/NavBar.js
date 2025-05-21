@@ -11,11 +11,12 @@ export const NavBar = ({ isAuth }) => {
         <FontAwesomeIcon icon={faHouse} />
         ホーム
       </Link>
-      <Link to="/createpost">
-        {" "}
-        <FontAwesomeIcon icon={faFilePen} />
-        記事投稿
-      </Link>
+      {isAuth && (
+        <Link to="/createpost">
+          <FontAwesomeIcon icon={faFilePen} />
+          記事投稿
+        </Link>
+      )}
       {isAuth ? (
         <Link to="/logout">
           <FontAwesomeIcon icon={faArrowRightToFile} />
