@@ -53,26 +53,26 @@ export const Home = () => {
   };
 
   return (
-    <div className="homePage">
+    <div className="home">
       {postList.map((post) => (
-        <div className="postContents" key={post.id}>
-          <div className="postHeader">
-            <h1>{post.title}</h1>
+        <div className="post" key={post.id}>
+          <div className="post__header">
+            <h1 className="post__title">{post.title}</h1>
           </div>
-          <div className="postTextContainer">{post.postText}</div>
-          <div className="nameAndDeleteButton">
-            <div className="postInfo">
-              <h3>@{post.author.username}</h3>
-              <div className="likeButton" onClick={() => handleLike(post)}>
+          <div className="post__content">{post.postText}</div>
+          <div className="post__footer">
+            <div className="post__info">
+              <h3 className="post__author">@{post.author.username}</h3>
+              <div className="post__like" onClick={() => handleLike(post)}>
                 <FontAwesomeIcon 
                   icon={faHeart} 
-                  className={post.likes?.includes(auth.currentUser?.uid) ? "liked" : ""}
+                  className={`post__like-icon ${post.likes?.includes(auth.currentUser?.uid) ? 'post__like-icon--active' : ''}`}
                 />
-                <span>{post.likes?.length || 0}</span>
+                <span className="post__like-count">{post.likes?.length || 0}</span>
               </div>
             </div>
             {post.author.id === auth.currentUser?.uid && (
-              <button className="deleteButton" onClick={() => handleDelete(post.id)}>
+              <button className="post__delete" onClick={() => handleDelete(post.id)}>
                 削除
               </button>
             )}

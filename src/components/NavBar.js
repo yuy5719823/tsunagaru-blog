@@ -7,30 +7,30 @@ import { auth } from "../firebase";
 
 export const NavBar = ({ isAuth }) => {
   return (
-    <nav>
-      <Link to="/">
-        <FontAwesomeIcon icon={faHouse} />
+    <nav className="nav">
+      <Link to="/" className="nav__link">
+        <FontAwesomeIcon icon={faHouse} className="nav__icon" />
         ホーム
       </Link>
       {isAuth && (
-        <Link to="/createpost">
-          <FontAwesomeIcon icon={faFilePen} />
+        <Link to="/createpost" className="nav__link">
+          <FontAwesomeIcon icon={faFilePen} className="nav__icon" />
           記事投稿
         </Link>
       )}
       {isAuth ? (
         <>
-          <span className="username">
-            {auth.currentUser?.displayName || "ユーザー"}
+          <span className="nav__username">
+            {auth.currentUser?.displayName || "ユーザー"}さん
           </span>
-          <Link to="/logout">
-            <FontAwesomeIcon icon={faArrowRightToFile} />
+          <Link to="/logout" className="nav__link">
+            <FontAwesomeIcon icon={faArrowRightToFile} className="nav__icon" />
             ログアウト
           </Link>
         </>
       ) : (
-        <Link to="/login">
-          <FontAwesomeIcon icon={faArrowRightToFile} />
+        <Link to="/login" className="nav__link">
+          <FontAwesomeIcon icon={faArrowRightToFile} className="nav__icon" />
           ログイン
         </Link>
       )}

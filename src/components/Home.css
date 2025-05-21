@@ -1,11 +1,11 @@
-.homePage {
+.home {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
 }
 
-.postContents {
+.post {
   background-color: white;
   border-radius: 10px;
   width: 100%;
@@ -15,42 +15,42 @@
   box-shadow: 4px 4px 20px -10px #777777;
 }
 
-.postHeader {
+.post__header {
   margin-bottom: 15px;
 }
 
-.postHeader h1 {
+.post__title {
   margin: 0;
   font-size: 24px;
   color: #333;
 }
 
-.postTextContainer {
+.post__content {
   margin-bottom: 15px;
   white-space: pre-wrap;
   color: #666;
   line-height: 1.6;
 }
 
-.nameAndDeleteButton {
+.post__footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #888;
 }
 
-.postInfo {
+.post__info {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.postInfo h3 {
+.post__author {
   margin: 0;
   font-size: 16px;
 }
 
-.likeButton {
+.post__like {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -60,27 +60,26 @@
   transition: all 0.3s ease;
 }
 
-.likeButton:hover {
+.post__like:hover {
   background-color: #f0f0f0;
 }
 
-.likeButton svg {
+.post__likeIcon {
   color: #888;
   transition: all 0.3s ease;
 }
 
-.likeButton.liked svg,
-.likeButton svg.liked {
+.post__likeIcon--active {
   color: #e74c3c;
   transform: scale(1.1);
 }
 
-.likeButton span {
+.post__likeCount {
   font-size: 14px;
   color: #666;
 }
 
-.deleteButton {
+.post__delete {
   background-color: #ff6b6b;
   color: white;
   border: none;
@@ -91,6 +90,6 @@
   transition: background-color 0.3s;
 }
 
-.deleteButton:hover {
+.post__delete:hover {
   background-color: #ff5252;
 } 
