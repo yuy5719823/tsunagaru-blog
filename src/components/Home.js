@@ -1,17 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, addDoc, query, orderBy, serverTimestamp } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import "./Home.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 
 export const Home = () => {
   const [postList, setPostList] = useState([]);
+  const [commentText, setCommentText] = useState({});
+  const [showComments, setShowComments] = useState({});
 
   useEffect(() => {
     const getPosts = async () => {
       const posts = await getDocs(collection(db, "posts"));
-      setPostList(posts.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      const postsData = await Promise.all(
+        posts.docs.map(async (doc) => {
+          const postData = { ...doc.data(), id: doc.id };
+          // コメントを取得
+          const commentsQuery = query(
+            collection(db, `posts/${doc.id}/comments`),
+            orderBy("createdAt", "desc")
+          );
+          const commentsSnapshot = await getDocs(commentsQuery);
+          const comments = commentsSnapshot.docs.map(commentDoc => {
+            const data = commentDoc.data();
+            return {
+              ...data,
+              id: commentDoc.id,
+              createdAt: data.createdAt?.toDate?.() || new Date()
+            };
+          });
+          return { ...postData, comments };
+        })
+      );
+      setPostList(postsData);
     };
     getPosts();
   }, []);
@@ -52,6 +74,79 @@ export const Home = () => {
     }));
   };
 
+  const handleComment = async (postId) => {
+    if (!auth.currentUser) {
+      alert("コメントするにはログインが必要です");
+      return;
+    }
+
+    const comment = commentText[postId]?.trim();
+    if (!comment) {
+      alert("コメントを入力してください");
+      return;
+    }
+
+    try {
+      const now = new Date();
+      const commentRef = await addDoc(collection(db, `posts/${postId}/comments`), {
+        text: comment,
+        author: {
+          username: auth.currentUser.displayName,
+          id: auth.currentUser.uid,
+        },
+        createdAt: serverTimestamp(),
+      });
+
+      const newComment = {
+        id: commentRef.id,
+        text: comment,
+        author: {
+          username: auth.currentUser.displayName,
+          id: auth.currentUser.uid,
+        },
+        createdAt: now
+      };
+
+      setPostList(postList.map(post => {
+        if (post.id === postId) {
+          return {
+            ...post,
+            comments: [newComment, ...(post.comments || [])]
+          };
+        }
+        return post;
+      }));
+
+      setCommentText({ ...commentText, [postId]: "" });
+    } catch (error) {
+      console.error("コメント投稿エラー:", error);
+      alert("コメントの投稿に失敗しました");
+    }
+  };
+
+  const toggleComments = (postId) => {
+    setShowComments({
+      ...showComments,
+      [postId]: !showComments[postId]
+    });
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    try {
+      return new Date(date).toLocaleString("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    } catch (error) {
+      console.error("日付のフォーマットエラー:", error);
+      return "";
+    }
+  };
+
   return (
     <div className="home">
       {postList.map((post) => (
@@ -63,12 +158,18 @@ export const Home = () => {
           <div className="post__footer">
             <div className="post__info">
               <h3 className="post__author">@{post.author.username}</h3>
-              <div className="post__like" onClick={() => handleLike(post)}>
-                <FontAwesomeIcon 
-                  icon={faHeart} 
-                  className={`post__like-icon ${post.likes?.includes(auth.currentUser?.uid) ? 'post__like-icon--active' : ''}`}
-                />
-                <span className="post__like-count">{post.likes?.length || 0}</span>
+              <div className="post__actions">
+                <div className="post__like" onClick={() => handleLike(post)}>
+                  <FontAwesomeIcon 
+                    icon={faHeart} 
+                    className={`post__likeIcon ${post.likes?.includes(auth.currentUser?.uid) ? 'post__likeIcon--active' : ''}`}
+                  />
+                  <span className="post__likeCount">{post.likes?.length || 0}</span>
+                </div>
+                <div className="post__comment" onClick={() => toggleComments(post.id)}>
+                  <FontAwesomeIcon icon={faComment} className="post__commentIcon" />
+                  <span className="post__commentCount">{post.comments?.length || 0}</span>
+                </div>
               </div>
             </div>
             {post.author.id === auth.currentUser?.uid && (
@@ -77,6 +178,37 @@ export const Home = () => {
               </button>
             )}
           </div>
+          {showComments[post.id] && (
+            <div className="post__comments">
+              <div className="post__commentForm">
+                <textarea
+                  className="post__commentInput"
+                  placeholder="コメントを入力..."
+                  value={commentText[post.id] || ""}
+                  onChange={(e) => setCommentText({ ...commentText, [post.id]: e.target.value })}
+                />
+                <button
+                  className="post__commentButton"
+                  onClick={() => handleComment(post.id)}
+                >
+                  コメント
+                </button>
+              </div>
+              <div className="post__commentList">
+                {post.comments?.map((comment) => (
+                  <div key={comment.id} className="post__commentItem">
+                    <div className="post__commentHeader">
+                      <span className="post__commentAuthor">@{comment.author.username}</span>
+                      <span className="post__commentDate">
+                        {formatDate(comment.createdAt)}
+                      </span>
+                    </div>
+                    <p className="post__commentText">{comment.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ))}
     </div>
