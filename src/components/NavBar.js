@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./NavBar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,6 +6,20 @@ import { faHouse, faFilePen, faArrowRightToFile } from "@fortawesome/free-solid-
 import { auth } from "../firebase";
 
 export const NavBar = ({ isAuth }) => {
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUsername(user.displayName || "ユーザー");
+      } else {
+        setUsername("");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <nav className="nav">
       <Link to="/" className="nav__link">
@@ -21,7 +35,7 @@ export const NavBar = ({ isAuth }) => {
       {isAuth ? (
         <>
           <span className="nav__username">
-            {auth.currentUser?.displayName || "ユーザー"}さん
+            {username}さん
           </span>
           <Link to="/logout" className="nav__link">
             <FontAwesomeIcon icon={faArrowRightToFile} className="nav__icon" />
