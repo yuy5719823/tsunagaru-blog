@@ -39,9 +39,45 @@
   color: #888;
 }
 
-.nameAndDeleteButton h3 {
+.postInfo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.postInfo h3 {
   margin: 0;
   font-size: 16px;
+}
+
+.likeButton {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.likeButton:hover {
+  background-color: #f0f0f0;
+}
+
+.likeButton svg {
+  color: #888;
+  transition: all 0.3s ease;
+}
+
+.likeButton.liked svg,
+.likeButton svg.liked {
+  color: #e74c3c;
+  transform: scale(1.1);
+}
+
+.likeButton span {
+  font-size: 14px;
+  color: #666;
 }
 
 .deleteButton {
