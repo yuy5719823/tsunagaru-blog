@@ -54,13 +54,7 @@ export const CreatePost = () => {
         <h1 className="createPost__title">記事を投稿する</h1>
         <div className="createPost__inputGroup">
           <label className="createPost__label">タイトル</label>
-          <input
-            type="text"
-            className="createPost__input"
-            placeholder="タイトルを記入"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          <input type="text" className="createPost__input" placeholder="タイトルを記入" value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
         <div className="createPost__inputGroup">
           <label className="createPost__label">投稿</label>
@@ -70,17 +64,13 @@ export const CreatePost = () => {
             value={postText}
             onChange={(e) => setPostText(e.target.value)}
             onKeyDown={(e) => {
-              if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !isSubmitting) {
+              if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !isSubmitting) {
                 createPost();
               }
             }}
           ></textarea>
         </div>
-        <button
-          className="createPost__button"
-          onClick={createPost}
-          disabled={isSubmitting}
-        >
+        <button className="createPost__button" onClick={createPost} disabled={isSubmitting}>
           {isSubmitting ? "投稿中..." : "投稿する"}
         </button>
       </div>

@@ -39,7 +39,7 @@ export const Comment = ({ postId, comment, onReply }) => {
           username: auth.currentUser.displayName,
           id: auth.currentUser.uid,
         },
-        createdAt: now
+        createdAt: now,
       };
 
       onReply(comment.id, newReply);
@@ -62,7 +62,7 @@ export const Comment = ({ postId, comment, onReply }) => {
         month: "2-digit",
         day: "2-digit",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       });
     } catch (error) {
       console.error("日付のフォーマットエラー:", error);
@@ -92,7 +92,7 @@ export const Comment = ({ postId, comment, onReply }) => {
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               onKeyDown={(e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
                   handleReply();
                 }
               }}
@@ -116,4 +116,4 @@ export const Comment = ({ postId, comment, onReply }) => {
       )}
     </div>
   );
-}; 
+};
