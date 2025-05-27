@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faReply } from "@fortawesome/free-solid-svg-icons";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db, auth } from "../../firebase";
+import { sanitizeComment } from "../../utils/sanitize";
 import "./Comment.css";
 
 export const Comment = ({ postId, comment, onReply }) => {
@@ -23,14 +24,19 @@ export const Comment = ({ postId, comment, onReply }) => {
 
     try {
       const now = new Date();
-      const replyRef = await addDoc(collection(db, `posts/${postId}/comments/${comment.id}/replies`), {
+      const replyData = {
         text: reply,
         author: {
           username: auth.currentUser.displayName,
           id: auth.currentUser.uid,
         },
         createdAt: serverTimestamp(),
-      });
+      };
+
+      // 返信データをサニタイズ
+      const sanitizedReply = sanitizeComment(replyData);
+
+      const replyRef = await addDoc(collection(db, `posts/${postId}/comments/${comment.id}/replies`), sanitizedReply);
 
       const newReply = {
         id: replyRef.id,

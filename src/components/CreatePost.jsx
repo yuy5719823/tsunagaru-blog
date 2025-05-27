@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
+import { sanitizePost } from "../utils/sanitize";
 import "./CreatePost.css";
 import { useNavigate } from "react-router-dom";
 
@@ -30,7 +31,7 @@ export const CreatePost = () => {
 
     setIsSubmitting(true);
     try {
-      await addDoc(collection(db, "posts"), {
+      const postData = {
         title: title.trim(),
         postText: postText.trim(),
         author: {
@@ -38,7 +39,12 @@ export const CreatePost = () => {
           id: auth.currentUser.uid,
         },
         createdAt: new Date().toISOString(),
-      });
+      };
+
+      // 投稿データをサニタイズ
+      const sanitizedPost = sanitizePost(postData);
+
+      await addDoc(collection(db, "posts"), sanitizedPost);
       navigate("/");
     } catch (error) {
       console.error("投稿エラー:", error);
