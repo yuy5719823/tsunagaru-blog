@@ -33,6 +33,31 @@
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
+  max-height: 150px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.post__content--expanded {
+  max-height: none;
+}
+
+.post__toggleButton {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 5px 0;
+  margin-bottom: 15px;
+  transition: color 0.3s ease;
+}
+
+.post__toggleButton:hover {
+  color: #333;
 }
 
 .post__footer {
