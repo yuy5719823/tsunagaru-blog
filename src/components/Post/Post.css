@@ -6,6 +6,9 @@
   margin-bottom: 20px;
   padding: 20px;
   box-shadow: 4px 4px 20px -10px #777777;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
 }
 
 .post__header {
@@ -16,6 +19,8 @@
   margin: 0;
   font-size: 24px;
   color: #333;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .post__content {
@@ -23,6 +28,11 @@
   white-space: pre-wrap;
   color: #666;
   line-height: 1.6;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .post__footer {
@@ -49,7 +59,8 @@
   gap: 15px;
 }
 
-.post__like, .post__comment {
+.post__like,
+.post__comment {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -59,11 +70,13 @@
   transition: all 0.3s ease;
 }
 
-.post__like:hover, .post__comment:hover {
+.post__like:hover,
+.post__comment:hover {
   background-color: #f0f0f0;
 }
 
-.post__likeIcon, .post__commentIcon {
+.post__likeIcon,
+.post__commentIcon {
   color: #888;
   transition: all 0.3s ease;
 }
@@ -73,7 +86,8 @@
   transform: scale(1.1);
 }
 
-.post__likeCount, .post__commentCount {
+.post__likeCount,
+.post__commentCount {
   font-size: 14px;
   color: #666;
 }
@@ -145,4 +159,4 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-} 
+}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { sanitizePost } from "../utils/sanitize";
+import { getErrorMessage, getFirebaseErrorMessage } from "../utils/errorMessages";
 import "./CreatePost.css";
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +10,7 @@ export const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [postText, setPostText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
@@ -18,14 +20,34 @@ export const CreatePost = () => {
     }
   }, [navigate]);
 
+  const validatePost = () => {
+    if (!title.trim()) {
+      setError(getErrorMessage("POST", "INVALID_TITLE"));
+      return false;
+    }
+    if (!postText.trim()) {
+      setError(getErrorMessage("POST", "INVALID_CONTENT"));
+      return false;
+    }
+    if (title.length > 100) {
+      setError(getErrorMessage("POST", "TITLE_TOO_LONG"));
+      return false;
+    }
+    if (postText.length > 10000) {
+      setError(getErrorMessage("POST", "CONTENT_TOO_LONG"));
+      return false;
+    }
+    return true;
+  };
+
   const createPost = async () => {
     if (!auth.currentUser) {
       navigate("/login");
       return;
     }
 
-    if (!title.trim() || !postText.trim()) {
-      alert("タイトルと投稿内容を入力してください");
+    setError(null);
+    if (!validatePost()) {
       return;
     }
 
@@ -48,7 +70,7 @@ export const CreatePost = () => {
       navigate("/");
     } catch (error) {
       console.error("投稿エラー:", error);
-      alert("投稿に失敗しました");
+      setError(getFirebaseErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -58,9 +80,19 @@ export const CreatePost = () => {
     <div className="createPost">
       <div className="createPost__container">
         <h1 className="createPost__title">記事を投稿する</h1>
+        {error && <div className="createPost__error">{error}</div>}
         <div className="createPost__inputGroup">
           <label className="createPost__label">タイトル</label>
-          <input type="text" className="createPost__input" placeholder="タイトルを記入" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <input
+            type="text"
+            className="createPost__input"
+            placeholder="タイトルを記入"
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              setError(null);
+            }}
+          />
         </div>
         <div className="createPost__inputGroup">
           <label className="createPost__label">投稿</label>
@@ -68,7 +100,10 @@ export const CreatePost = () => {
             className="createPost__textarea"
             placeholder="投稿内容を記入 (Ctrl/Command + Enterで送信)"
             value={postText}
-            onChange={(e) => setPostText(e.target.value)}
+            onChange={(e) => {
+              setPostText(e.target.value);
+              setError(null);
+            }}
             onKeyDown={(e) => {
               if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !isSubmitting) {
                 createPost();
