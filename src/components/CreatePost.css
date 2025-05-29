@@ -16,6 +16,7 @@
   gap: 20px;
   padding: 40px;
   box-shadow: 4px 4px 20px -10px #777777;
+  box-sizing: border-box;
 }
 
 .createPost__title {
@@ -56,6 +57,7 @@
   border-radius: 4px;
   font-size: 14px;
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
 }
 
 .createPost__input:focus {
@@ -72,6 +74,7 @@
   font-size: 14px;
   resize: vertical;
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
 }
 
 .createPost__textarea:focus {
@@ -106,4 +109,64 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 768px) {
+  .createPost__container {
+    width: 90%;
+    max-width: 500px;
+    padding: 30px;
+  }
+
+  .createPost__title {
+    font-size: 22px;
+  }
+
+  .createPost__label {
+    font-size: 15px;
+  }
+
+  .createPost__input,
+  .createPost__textarea {
+    font-size: 14px;
+  }
+
+  .createPost__button {
+    padding: 10px 0;
+    font-size: 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .createPost__container {
+    width: 95%;
+    padding: 20px;
+    min-height: 350px;
+  }
+
+  .createPost__title {
+    font-size: 20px;
+  }
+
+  .createPost__label {
+    font-size: 14px;
+  }
+
+  .createPost__input {
+    height: 25px;
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  .createPost__textarea {
+    height: 100px;
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .createPost__button {
+    padding: 8px 0;
+    font-size: 14px;
+  }
 }

@@ -5,6 +5,19 @@
   padding: 20px;
 }
 
+/* レスポンシブ対応 */
+@media screen and (max-width: 768px) {
+  .home {
+    padding: 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .home {
+    padding: 10px;
+  }
+}
+
 .post {
   background-color: white;
   border-radius: 10px;
@@ -56,7 +69,8 @@
   gap: 15px;
 }
 
-.post__like, .post__comment {
+.post__like,
+.post__comment {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -66,11 +80,13 @@
   transition: all 0.3s ease;
 }
 
-.post__like:hover, .post__comment:hover {
+.post__like:hover,
+.post__comment:hover {
   background-color: #f0f0f0;
 }
 
-.post__likeIcon, .post__commentIcon {
+.post__likeIcon,
+.post__commentIcon {
   color: #888;
   transition: all 0.3s ease;
 }
@@ -80,7 +96,8 @@
   transform: scale(1.1);
 }
 
-.post__likeCount, .post__commentCount {
+.post__likeCount,
+.post__commentCount {
   font-size: 14px;
   color: #666;
 }
@@ -311,4 +328,4 @@
   margin: 0;
   line-height: 1.4;
   font-size: 0.9rem;
-} 
+}
