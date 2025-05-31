@@ -29,12 +29,26 @@ export const Post = ({ post, onDelete, onUpdate }) => {
 
   const handleDelete = async () => {
     try {
+      if (!auth.currentUser) {
+        setError(ERROR_MESSAGES.AUTH_REQUIRED);
+        setTimeout(() => setError(null), 3000);
+        return;
+      }
+
+      if (post.author.id !== auth.currentUser.uid) {
+        setError("この投稿を削除する権限がありません");
+        setTimeout(() => setError(null), 3000);
+        return;
+      }
+
       await deleteDoc(doc(db, "posts", post.id));
       onDelete(post.id);
     } catch (error) {
       console.error("投稿削除エラー:", error);
+      console.error("エラーコード:", error.code);
+      console.error("エラーメッセージ:", error.message);
       setError(ERROR_MESSAGES.DELETE_ERROR);
-      setTimeout(() => setError(null), 3000); // 3秒後にエラーメッセージを消す
+      setTimeout(() => setError(null), 3000);
     }
   };
 
