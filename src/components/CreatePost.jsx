@@ -3,6 +3,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { sanitizePost } from "../utils/sanitize";
 import { getErrorMessage, getFirebaseErrorMessage } from "../utils/errorMessages";
+import { getSecurityTokens } from "../utils/csrf";
 import "./CreatePost.css";
 import { useNavigate } from "react-router-dom";
 
@@ -53,6 +54,9 @@ export const CreatePost = () => {
 
     setIsSubmitting(true);
     try {
+      // セキュリティトークンの取得
+      const { idToken, csrfToken } = await getSecurityTokens();
+
       const postData = {
         title: title.trim(),
         postText: postText.trim(),
@@ -61,11 +65,13 @@ export const CreatePost = () => {
           id: auth.currentUser.uid,
         },
         createdAt: new Date().toISOString(),
+        csrfToken, // CSRFトークンを追加
       };
 
       // 投稿データをサニタイズ
       const sanitizedPost = sanitizePost(postData);
 
+      // FirestoreのセキュリティルールでCSRFトークンを検証
       await addDoc(collection(db, "posts"), sanitizedPost);
       navigate("/");
     } catch (error) {
