@@ -1,8 +1,10 @@
 .createPost {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  height: 90vh;
+  min-height: calc(100vh - 60px);
+  padding: 20px;
+  background-color: #f8f9fa;
 }
 
 .createPost__container {
@@ -10,13 +12,13 @@
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  min-height: 400px;
+  justify-content: flex-start;
   width: 500px;
   gap: 20px;
   padding: 40px;
   box-shadow: 4px 4px 20px -10px #777777;
   box-sizing: border-box;
+  margin-top: 20px;
 }
 
 .createPost__title {
@@ -113,10 +115,15 @@
 
 /* レスポンシブ対応 */
 @media screen and (max-width: 768px) {
+  .createPost {
+    padding: 15px;
+  }
+
   .createPost__container {
     width: 90%;
     max-width: 500px;
     padding: 30px;
+    margin-top: 15px;
   }
 
   .createPost__title {
@@ -139,10 +146,14 @@
 }
 
 @media screen and (max-width: 480px) {
+  .createPost {
+    padding: 10px;
+  }
+
   .createPost__container {
     width: 95%;
     padding: 20px;
-    min-height: 350px;
+    margin-top: 10px;
   }
 
   .createPost__title {
