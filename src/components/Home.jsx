@@ -9,35 +9,31 @@ export const Home = () => {
 
   useEffect(() => {
     const getPosts = async () => {
-      const posts = await getDocs(collection(db, "posts"));
+      // 投稿をcreatedAtで降順にソート
+      const postsQuery = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+      const posts = await getDocs(postsQuery);
       const postsData = await Promise.all(
         posts.docs.map(async (doc) => {
           const postData = { ...doc.data(), id: doc.id };
           // コメントを取得（最新順）
-          const commentsQuery = query(
-            collection(db, `posts/${doc.id}/comments`),
-            orderBy("createdAt", "desc")
-          );
+          const commentsQuery = query(collection(db, `posts/${doc.id}/comments`), orderBy("createdAt", "desc"));
           const commentsSnapshot = await getDocs(commentsQuery);
           const comments = await Promise.all(
             commentsSnapshot.docs.map(async (commentDoc) => {
               const commentData = commentDoc.data();
               // 返信を取得（最新順）
-              const repliesQuery = query(
-                collection(db, `posts/${doc.id}/comments/${commentDoc.id}/replies`),
-                orderBy("createdAt", "desc")
-              );
+              const repliesQuery = query(collection(db, `posts/${doc.id}/comments/${commentDoc.id}/replies`), orderBy("createdAt", "desc"));
               const repliesSnapshot = await getDocs(repliesQuery);
-              const replies = repliesSnapshot.docs.map(replyDoc => ({
+              const replies = repliesSnapshot.docs.map((replyDoc) => ({
                 ...replyDoc.data(),
                 id: replyDoc.id,
-                createdAt: replyDoc.data().createdAt?.toDate?.() || new Date()
+                createdAt: replyDoc.data().createdAt?.toDate?.() || new Date(),
               }));
               return {
                 ...commentData,
                 id: commentDoc.id,
                 createdAt: commentData.createdAt?.toDate?.() || new Date(),
-                replies
+                replies,
               };
             })
           );
@@ -50,24 +46,17 @@ export const Home = () => {
   }, []);
 
   const handleDelete = (postId) => {
-    setPostList(postList.filter(post => post.id !== postId));
+    setPostList(postList.filter((post) => post.id !== postId));
   };
 
   const handleUpdate = (postId, updatedPost) => {
-    setPostList(postList.map(post => 
-      post.id === postId ? updatedPost : post
-    ));
+    setPostList(postList.map((post) => (post.id === postId ? updatedPost : post)));
   };
 
   return (
     <div className="home">
       {postList.map((post) => (
-        <Post
-          key={post.id}
-          post={post}
-          onDelete={handleDelete}
-          onUpdate={handleUpdate}
-        />
+        <Post key={post.id} post={post} onDelete={handleDelete} onUpdate={handleUpdate} />
       ))}
     </div>
   );
