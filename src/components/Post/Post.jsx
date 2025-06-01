@@ -209,22 +209,32 @@ export const Post = ({ post, onDelete, onUpdate }) => {
       </div>
       {showComments && (
         <div className="post__comments">
-          <div className="post__commentForm">
-            <textarea
-              className="post__commentInput"
-              placeholder="コメントを入力... (Ctrl/Command + Enterで送信)"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              onKeyDown={(e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-                  handleComment();
-                }
-              }}
-            />
-            <button className="post__commentButton" onClick={handleComment}>
-              コメント
-            </button>
-          </div>
+          {auth.currentUser ? (
+            <div className="post__commentForm">
+              <textarea
+                className="post__commentInput"
+                placeholder="コメントを入力... (Ctrl/Command + Enterで送信)"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                onKeyDown={(e) => {
+                  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                    handleComment();
+                  }
+                }}
+              />
+              <button className="post__commentButton" onClick={handleComment}>
+                コメント
+              </button>
+            </div>
+          ) : (
+            <div className="post__loginMessage">
+              コメントするには
+              <a href="/login" className="post__loginLink">
+                ログイン
+              </a>
+              が必要です
+            </div>
+          )}
           <div className="post__commentList">
             {post.comments?.map((comment) => (
               <Comment key={comment.id} postId={post.id} comment={comment} onReply={handleReply} />

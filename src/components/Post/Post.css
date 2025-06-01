@@ -223,6 +223,28 @@
   }
 }
 
+.post__loginMessage {
+  text-align: center;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  color: #666;
+  font-size: 14px;
+}
+
+.post__loginLink {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.post__loginLink:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
+
 /* レスポンシブ対応 */
 @media screen and (max-width: 768px) {
   .post {
