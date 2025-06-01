@@ -213,7 +213,7 @@ export const Post = ({ post, onDelete, onUpdate }) => {
             <div className="post__commentForm">
               <textarea
                 className="post__commentInput"
-                placeholder="コメントを入力... (Ctrl/Command + Enterで送信)"
+                placeholder="コメントを入力..."
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 onKeyDown={(e) => {

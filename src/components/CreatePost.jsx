@@ -104,7 +104,7 @@ export const CreatePost = () => {
           <label className="createPost__label">投稿</label>
           <textarea
             className="createPost__textarea"
-            placeholder="投稿内容を記入 (Ctrl/Command + Enterで送信)"
+            placeholder="投稿内容を記入"
             value={postText}
             onChange={(e) => {
               setPostText(e.target.value);

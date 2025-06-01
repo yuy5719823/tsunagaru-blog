@@ -94,7 +94,7 @@ export const Comment = ({ postId, comment, onReply }) => {
           <div className="comment__replyForm">
             <textarea
               className="comment__replyInput"
-              placeholder="返信を入力... (Ctrl/Command + Enterで送信)"
+              placeholder="返信を入力..."
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               onKeyDown={(e) => {
